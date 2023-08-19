@@ -14,18 +14,27 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+You can start the project with a minimum node version of 16.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+## Threader: Reinventing Social Networking with Next.js 13
 
-## Learn More
+Welcome to Threader, an innovative Next.js 13 app that is set to redefine the landscape of social media. Threader provides users with the ability to share text, images, and videos, enabling interactions through replies, reposts, and likes.
 
-To learn more about Next.js, take a look at the following resources:
+### Project Highlights:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+- **Explore Next.js 13.4 with SSR:** Master Server Side Rendering (SSR) for optimal performance.
+- **Manage Complex MongoDB Schemas:** Handle intricate MongoDB schemas efficiently.
+- **Craft Layouts with TailwindCSS:** Create captivating layouts using TailwindCSS.
+- **Secure Authentication via Clerk:** Implement secure user authentication.
+- **Efficient File Uploads with UploadThing:** Streamline multimedia sharing.
+- **Discover Shadcn Components:** Elevate the UI with Shadcn components.
+- **Real-time Event Handling via Webhooks:** Keep users engaged with real-time updates.
+- **Middleware, API Actions, and Authorization:** Ensure smooth frontend-backend communication.
+- **Leverage Next.js Layout Route Groups:** Efficiently manage app layouts.
+- **Data Validation powered by Zod:** Ensure data accuracy with Zod.
+- **Streamline Form Management with React Hook Form:** Manage forms effectively.
+- **Promote Reusability with Components:** Develop reusable components.
+- **Craft Solid Application Architecture:** Build a robust app foundation.
 
 ## Deploy on Vercel
 
