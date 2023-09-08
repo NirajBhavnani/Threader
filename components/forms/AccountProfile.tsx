@@ -20,6 +20,8 @@ import { ChangeEvent, useState } from "react";
 import { Textarea } from "../ui/textarea";
 import { isBase64Image } from "@/lib/utils";
 import { useUploadThing } from "@/lib/uploadthing";
+import { updateUser } from "@/lib/actions/user.actions";
+import { usePathname, useRouter } from "next/navigation";
 
 interface Props {
   user: {
@@ -36,6 +38,8 @@ interface Props {
 const AccountProfile = ({ user, btnTitle }: Props) => {
   const [files, setFiles] = useState<File[]>([]);
   const { startUpload } = useUploadThing("media");
+  const router = useRouter();
+  const pathname = usePathname();
 
   const form = useForm({
     resolver: zodResolver(UserValidation),
@@ -79,14 +83,30 @@ const AccountProfile = ({ user, btnTitle }: Props) => {
     if (hasImageChanged) {
       const imgRes = await startUpload(files);
 
-      if(imgRes && imgRes[0].fileUrl){
+      if (imgRes && imgRes[0].fileUrl) {
         // With react-hook-form, you don't have to care about useState and setting the state
         // using setter function, you can just mutate the values like this:
         values.profile_photo = imgRes[0].fileUrl;
       }
     }
 
-    // TODO: Update user profile
+    // Update user profile
+    // Using single object parameter to avoid the parameter sequence mistake while storing data in DB
+    await updateUser({
+      name: values.name,
+      path: pathname,
+      username: values.username,
+      userId: user.id, //user.id is coming from clerk
+      bio: values.bio,
+      image: values.profile_photo,
+    });
+
+    // redirect to previous page after editing or homepage if 1st time
+    if (pathname === "/profile/edit") {
+      router.back();
+    } else {
+      router.push("/");
+    }
   };
 
   return (
