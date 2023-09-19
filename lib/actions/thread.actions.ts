@@ -39,3 +39,37 @@ export async function createThread({
     throw new Error(`Error creating thread: ${error.message}`);
   }
 }
+
+export async function fetchPosts(pageNumber = 1, pageSize = 20) {
+  connectToDB();
+
+  // Pagination: calculate the no. of posts to skip
+  const skipAmount = (pageNumber - 1) * pageSize;
+
+  // condition for top-level threads
+  const topLevel = { parentId: { $in: [null, undefined] } }
+
+  // fetch the posts that have no parents (top-level threads)
+  const postsQuery = Thread.find(topLevel)
+    .sort({ createdAt: "desc" })
+    .skip(skipAmount)
+    .populate({ path: "author", model: User })
+    // recursive approach done for comments / children thread
+    .populate({
+      path: "children",
+      populate: {
+        path: "author",
+        model: User,
+        select: "_id name parentId image",
+      },
+    });
+
+  const totalPostsCount = await Thread.countDocuments(topLevel);
+
+  const posts = await postsQuery.exec();
+
+  // do we have a next page?
+  const isNext = totalPostsCount > skipAmount + posts.length;
+
+  return { posts, isNext };
+}
