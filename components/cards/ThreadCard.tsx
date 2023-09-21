@@ -34,6 +34,7 @@ const ThreadCard = ({
   community,
   createdAt,
   comments,
+  isComment,
 }: Props) => {
   return (
     <article className="flex w-full flex-col rounded-xl bg-dark-2 p-7">
@@ -78,13 +79,13 @@ const ThreadCard = ({
                 />
                 {/* It will point to the details page of that thread */}
                 <Link href={`/thread/${id}`}>
-                    <Image
-                      src="/assets/reply.svg"
-                      alt="reply"
-                      width={24}
-                      height={24}
-                      className="cursor-pointer object-contain"
-                    />
+                  <Image
+                    src="/assets/reply.svg"
+                    alt="reply"
+                    width={24}
+                    height={24}
+                    className="cursor-pointer object-contain"
+                  />
                 </Link>
                 <Image
                   src="/assets/repost.svg"
@@ -101,6 +102,15 @@ const ThreadCard = ({
                   className="cursor-pointer object-contain"
                 />
               </div>
+
+              {/* We've to figure out if the threads we are rendering are comments or not */}
+              {isComment && comments.length > 0 && (
+                <Link href={`/thread/${id}`}>
+                  <p className="mt-1 text-subtle-medium text-gray-1">
+                    {comments.length} replies
+                  </p>
+                </Link>
+              )}
             </div>
           </div>
         </div>

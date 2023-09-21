@@ -47,7 +47,7 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
   const skipAmount = (pageNumber - 1) * pageSize;
 
   // condition for top-level threads
-  const topLevel = { parentId: { $in: [null, undefined] } }
+  const topLevel = { parentId: { $in: [null, undefined] } };
 
   // fetch the posts that have no parents (top-level threads)
   const postsQuery = Thread.find(topLevel)
@@ -72,4 +72,44 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
   const isNext = totalPostsCount > skipAmount + posts.length;
 
   return { posts, isNext };
+}
+
+export async function fetchThreadById(id: string) {
+  connectToDB();
+
+  // multi-level commenting functionality
+  try {
+    const thread = await Thread.findById(id)
+      .populate({
+        path: "author",
+        model: User,
+        select: "_id id name image",
+      })
+      .populate({
+        path: "children",
+        // each child thread gets populated with the author of that specific comment
+        populate: [
+          {
+            path: "author",
+            model: User,
+            select: "_id id name parentId image",
+          },
+          // populate thread comment itself
+          {
+            path: "children",
+            model: Thread,
+            populate: {
+              path: "author",
+              model: User,
+              select: "_id id name parentId image",
+            },
+          },
+        ],
+      })
+      .exec();
+
+    return thread;
+  } catch (error: any) {
+    throw new Error(`Error fetching thread: ${error.message}`);
+  }
 }
