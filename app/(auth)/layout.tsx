@@ -22,8 +22,10 @@ export default function RootLayout({
     <ClerkProvider>
       <html lang="en">
         <body className={`${inter.className} bg-dark-1`}>
-            {/* Render the children which is going to be shown within this layout */}
-            {children}
+            <div className="w-full flex justify-center items-center min-h-screen">
+              {/* Render the children which is going to be shown within this layout */}
+              {children}
+            </div>
         </body>
       </html>
     </ClerkProvider>
