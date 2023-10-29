@@ -6,6 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { profileTabs } from "@/constants";
 import Image from "next/image";
 import ThreadsTab from "@/components/shared/ThreadsTab";
+import { redirect } from "next/navigation";
 
 // Here, destructuring is done --- what if we click on some other user's profile icon
 const ProfilePage = async ({ params }: { params: { id: string } }) => {
@@ -14,6 +15,7 @@ const ProfilePage = async ({ params }: { params: { id: string } }) => {
 
   // fetch the userInfo of the profile we just clicked
   const userInfo = await fetchUser(params.id);
+  if (!userInfo?.onboarded) redirect("/onboarding");
 
   return (
     <section>
