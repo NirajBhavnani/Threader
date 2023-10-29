@@ -2,6 +2,8 @@
 
 import Thread from "../models/thread.model";
 import User from "../models/user.model";
+import Community from "../models/community.model";
+
 import { connectToDB } from "../mongoose";
 import { revalidatePath } from "next/cache";
 
@@ -21,10 +23,16 @@ export async function createThread({
   try {
     connectToDB();
 
+    // Find the community if any
+    const communityIdObject = await Community.findOne(
+      { id: communityId },
+      { _id: 1 }
+    );
+
     const createdThread = await Thread.create({
       text,
       author,
-      communityId: null,
+      community: communityIdObject, // Assign communityId if provided, or leave it null for personal account
     });
 
     // Update user model
@@ -32,6 +40,13 @@ export async function createThread({
     await User.findByIdAndUpdate(author, {
       $push: { threads: createdThread._id },
     });
+
+    if (communityIdObject) {
+      // Update Community model
+      await Community.findByIdAndUpdate(communityIdObject, {
+        $push: { threads: createdThread._id },
+      });
+    }
 
     // It's going to make sure that the changes happen immediately
     revalidatePath(path);
@@ -53,7 +68,12 @@ export async function fetchPosts(pageNumber = 1, pageSize = 20) {
   const postsQuery = Thread.find(topLevel)
     .sort({ createdAt: "desc" })
     .skip(skipAmount)
+    .limit(pageSize)
     .populate({ path: "author", model: User })
+    .populate({
+      path: "community",
+      model: Community,
+    })
     // recursive approach done for comments / children thread
     .populate({
       path: "children",
@@ -85,6 +105,11 @@ export async function fetchThreadById(id: string) {
         model: User,
         select: "_id id name image",
       })
+      .populate({
+        path: "community",
+        model: Community,
+        select: "_id id name image",
+      }) // Populate the community field with _id and name
       .populate({
         path: "children",
         // each child thread gets populated with the author of that specific comment
